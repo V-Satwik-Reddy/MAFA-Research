@@ -129,9 +129,6 @@ def main():
             if not fn.lower().endswith('.csv'):
                 continue
             found_files.append(os.path.join(sd, fn))
-        if not found_files:
-            print(f"No prediction CSVs found under test dirs: {test_search_dirs}")
-            return
 
         for path in sorted(found_files):
             try:
