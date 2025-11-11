@@ -1,0 +1,13 @@
+{
+  "mae": 5.166630268096924,
+  "mape": 0.04570220410823822,
+  "accuracy_proxy": 0.9542977958917618,
+  "features": [
+    "open",
+    "high",
+    "low",
+    "close",
+    "volume"
+  ],
+  "target_idx": 3
+}
