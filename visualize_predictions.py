@@ -5,14 +5,22 @@ import argparse
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--ticker", default="MSFT" )
+    ap.add_argument("--ticker", required=True, help="Ticker symbol (required)")
+    ap.add_argument("--test" , default="NO", help="Path to test CSV file (default: results/{ticker}/test/prediction/...)")
     args = ap.parse_args()
     base_dir = os.path.dirname(__file__)
-    paths = {
-        "MLP Advanced": os.path.join(base_dir,"output", args.ticker ,"mlp_advanced", "predictions.csv"),
-        "LSTM Advanced": os.path.join(base_dir, "output", args.ticker ,"lstm_advanced", "predictions.csv"),
-        "LSTM + News Advanced": os.path.join(base_dir, "output", args.ticker ,"lstm_news_advanced", "predictions.csv")
-    }
+    if( args.test=="yes" or args.test=="YES" or args.test=="Yes" ):
+        paths = {
+        "MLP Advanced": os.path.join(base_dir,"results", args.ticker ,"test","prediction","mlp_advanced_predictions.csv"),
+        "LSTM Advanced": os.path.join(base_dir, "results", args.ticker ,"test","prediction","lstm_advanced_predictions.csv"),
+        "LSTM + News Advanced": os.path.join(base_dir, "results", args.ticker ,"test","prediction","lstm_news_advanced_predictions.csv")
+        }
+    else:
+        paths = {
+            "MLP Advanced": os.path.join(base_dir,"output", args.ticker ,"mlp_advanced", "predictions.csv"),
+            "LSTM Advanced": os.path.join(base_dir, "output", args.ticker ,"lstm_advanced", "predictions.csv"),
+            "LSTM + News Advanced": os.path.join(base_dir, "output", args.ticker ,"lstm_news_advanced", "predictions.csv")
+        }
     # print(paths)
     dfs = {}
     for name, path in paths.items():
@@ -49,8 +57,10 @@ def main():
     plt.legend()
     plt.grid(True, linestyle="--", alpha=0.6)
     plt.tight_layout()
-
-    out_path = os.path.join(base_dir,"results", args.ticker,"model_comparison_plot.png")
+    if(args.test=="yes" or args.test=="YES" or args.test=="Yes" ):
+        out_path = os.path.join(base_dir,"results", args.ticker,"test","model_comparison_plot.png")
+    else:
+        out_path = os.path.join(base_dir,"results", args.ticker,"train","model_comparison_plot.png")
     os.makedirs(os.path.dirname(out_path), exist_ok=True)
     plt.savefig(out_path, dpi=300)
     print(f"✅ Combined comparison plot saved to: {out_path}")

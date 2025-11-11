@@ -146,39 +146,64 @@ class ModelWrapper:
 if __name__ == '__main__':
     import argparse
     ap = argparse.ArgumentParser()
-    ap.add_argument('--model_dir', default=None, help='Folder containing model.keras (or parent of model folder)')
-    ap.add_argument('--model_path', default=None, help='Exact model file path to load')
-    ap.add_argument('--prices', required=True)
-    ap.add_argument('--news', default=None)
-    ap.add_argument('--outdir', default=None)
+    ap.add_argument('--ticker', required=True, help='Ticker symbol (required)')
+    ap.add_argument('--model', default=None, help='If provided, only run this model (e.g. mlp_advanced). Otherwise run all models under output/{ticker}/')
+    ap.add_argument('--prices', default=None, help='Prices CSV file for inference (default: test_data/{ticker}.csv)')
+    ap.add_argument('--news', default=None, help='Optional news CSV for sentiment-aware models')
+    ap.add_argument('--outdir', default=None, help='Output directory (default: results/{ticker}/test/prediction)')
     args = ap.parse_args()
 
-    if args.outdir:
-        outp = os.path.join(args.outdir)
-    else:
-        # default: save next to model
-        md = args.model_path or args.model_dir
-        if md is None:
-            raise ValueError('Provide model_dir or model_path')
-        if args.model_path is None:
-            # derive model file
-            # search
-            cand = []
-            if os.path.isdir(args.model_dir):
-                p = os.path.join(args.model_dir, 'model.keras')
-                if os.path.exists(p):
-                    cand.append(p)
-                for sub in glob.glob(os.path.join(args.model_dir, '*')):
-                    p2 = os.path.join(sub, 'model.keras')
-                    if os.path.exists(p2):
-                        cand.append(p2)
-            if not cand:
-                raise FileNotFoundError(f'No model.keras found under {args.model_dir}')
-            model_path = cand[0]
-        else:
-            model_path = args.model_path
-        outp = os.path.join(os.path.dirname(model_path), 'predictions.csv')
+    prices_file = args.prices or f'test_data/{args.ticker}.csv'
+    if not os.path.exists(prices_file):
+        raise FileNotFoundError(f'Prices file not found: {prices_file}')
 
-    wrapper = ModelWrapper(model_dir=args.model_dir, model_path=args.model_path)
-    df = wrapper.predict_from_csv(args.prices, news_csv=args.news, save_to=outp)
-    print(df.head())
+    models_root = os.path.join('output', args.ticker)
+    if not os.path.isdir(models_root):
+        raise FileNotFoundError(f'Models directory not found: {models_root}')
+
+    # determine models to run
+    if args.model:
+        models_to_try = [args.model]
+    else:
+        # list immediate subdirectories (likely: lstm_advanced, lstm_news_advanced, mlp_advanced)
+        models_to_try = [d for d in os.listdir(models_root) if os.path.isdir(os.path.join(models_root, d))]
+
+    out_base = args.outdir or os.path.join('results', args.ticker, 'test', 'prediction')
+    os.makedirs(out_base, exist_ok=True)
+
+    any_ran = False
+    for model_name in models_to_try:
+        model_dir = os.path.join(models_root, model_name)
+        if not os.path.isdir(model_dir):
+            # maybe user supplied full path to a model folder
+            if os.path.exists(model_name) and os.path.isdir(model_name):
+                model_dir = model_name
+            else:
+                print(f"Skipping '{model_name}': directory not found under {models_root}")
+                continue
+
+        # check for model.keras under this directory (ModelWrapper will search one level deeper too)
+        cand_model = os.path.join(model_dir, 'model.keras')
+        if not os.path.exists(cand_model):
+            # try deeper search
+            found = False
+            for sub in glob.glob(os.path.join(model_dir, '*')):
+                if os.path.exists(os.path.join(sub, 'model.keras')):
+                    found = True
+                    break
+            if not found:
+                print(f"No model.keras found for '{model_name}' under {model_dir}; skipping.")
+                continue
+
+        print(f"Running model '{model_name}' on prices '{prices_file}'...")
+        try:
+            wrapper = ModelWrapper(model_dir=model_dir)
+            outpath = os.path.join(out_base, f'{model_name}_predictions.csv')
+            df = wrapper.predict_from_csv(prices_file, news_csv=args.news, save_to=outpath)
+            print(f"Saved predictions for '{model_name}' to {outpath} — rows: {len(df)}")
+            any_ran = True
+        except Exception as e:
+            print(f"Error running model '{model_name}': {e}")
+
+    if not any_ran:
+        raise RuntimeError('No models were run — ensure models exist under output/{ticker} or pass --model with a valid model folder')
