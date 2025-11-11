@@ -76,7 +76,7 @@ def main():
     ap.add_argument("--split", type=float, default=0.85, help="(deprecated) fraction split if date ranges not used")
     ap.add_argument("--train-start", default="2019-01-01", help="training start date (inclusive)")
     ap.add_argument("--train-end", default="2021-12-31", help="training end date (inclusive)")
-    ap.add_argument("--test-start", default="2022-07-01", help="test start date (inclusive)")
+    ap.add_argument("--test-start", default="2022-01-01", help="test start date (inclusive)")
     ap.add_argument("--test-end", default="2022-12-31", help="test end date (inclusive)")
     ap.add_argument("--batch_size", type=int, default=64)
     args = ap.parse_args()

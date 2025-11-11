@@ -24,9 +24,9 @@ import tensorflow as tf
 from sklearn.preprocessing import MinMaxScaler
 
 # reuse helper functions from your scripts
-from mlp_advanced import load_prices, make_sequences_multifeat
+from src.mlp_advanced import load_prices, make_sequences_multifeat
 try:
-    from lstm_news_advanced import compute_daily_sentiment, align_with_sentiment, make_sequences_multifeat_with_sent
+    from src.lstm_news_advanced import compute_daily_sentiment, align_with_sentiment, make_sequences_multifeat_with_sent
 except Exception:
     # if lstm_news_advanced not importable for some reason, define fallback that raises when needed
     compute_daily_sentiment = None
