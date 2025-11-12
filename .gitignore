@@ -3,3 +3,5 @@ results
 test_data
 output
 src/__pycache__/
+fetch_nyt_test_news.py
+test_news_data/

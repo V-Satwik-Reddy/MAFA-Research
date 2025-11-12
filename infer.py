@@ -199,7 +199,9 @@ if __name__ == '__main__':
         try:
             wrapper = ModelWrapper(model_dir=model_dir)
             outpath = os.path.join(out_base, f'{model_name}_predictions.csv')
-            df = wrapper.predict_from_csv(prices_file, news_csv=args.news, save_to=outpath)
+            if model_name == 'lstm_news_advanced':
+                news_csv=f'test_news_data/{args.ticker}.csv'
+            df = wrapper.predict_from_csv(prices_file, news_csv=news_csv if model_name == 'lstm_news_advanced' else args.news, save_to=outpath)
             print(f"Saved predictions for '{model_name}' to {outpath} — rows: {len(df)}")
             any_ran = True
         except Exception as e:
