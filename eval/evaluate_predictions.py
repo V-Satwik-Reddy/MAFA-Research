@@ -116,7 +116,7 @@ def main():
             out_name = args.out
         else:
             out_name = f"{base}_returns.csv"
-        out_path = os.path.join(out_base, out_name)
+        out_path = os.path.join(out_name)
         pd.DataFrame([res]).to_csv(out_path, index=False)
         print(f"Saved summary to {out_path}")
         return

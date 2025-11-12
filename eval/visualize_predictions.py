@@ -11,17 +11,17 @@ def main():
     base_dir = os.path.dirname(__file__)
     if( args.test=="yes" or args.test=="YES" or args.test=="Yes" ):
         paths = {
-        "MLP Advanced": os.path.join(base_dir,"results", args.ticker ,"test","prediction","mlp_advanced_predictions.csv"),
-        "LSTM Advanced": os.path.join(base_dir, "results", args.ticker ,"test","prediction","lstm_advanced_predictions.csv"),
-        "LSTM + News Advanced": os.path.join(base_dir, "results", args.ticker ,"test","prediction","lstm_news_advanced_predictions.csv")
+        "MLP Advanced": os.path.join("/home/satwik/mafa/","results", args.ticker ,"test","prediction","mlp_advanced_predictions.csv"),
+        "LSTM Advanced": os.path.join("/home/satwik/mafa/", "results", args.ticker ,"test","prediction","lstm_advanced_predictions.csv"),
+        "LSTM + News Advanced": os.path.join("/home/satwik/mafa/", "results", args.ticker ,"test","prediction","lstm_news_advanced_predictions.csv")
         }
     else:
         paths = {
-            "MLP Advanced": os.path.join(base_dir,"output", args.ticker ,"mlp_advanced", "predictions.csv"),
-            "LSTM Advanced": os.path.join(base_dir, "output", args.ticker ,"lstm_advanced", "predictions.csv"),
-            "LSTM + News Advanced": os.path.join(base_dir, "output", args.ticker ,"lstm_news_advanced", "predictions.csv")
+            "MLP Advanced": os.path.join("/home/satwik/mafa/","output", args.ticker ,"mlp_advanced", "predictions.csv"),
+            "LSTM Advanced": os.path.join("/home/satwik/mafa/", "output", args.ticker ,"lstm_advanced", "predictions.csv"),
+            "LSTM + News Advanced": os.path.join("/home/satwik/mafa/", "output", args.ticker ,"lstm_news_advanced", "predictions.csv")
         }
-    # print(paths)
+    # print(base_dir)
     dfs = {}
     for name, path in paths.items():
         if os.path.exists(path):
@@ -58,9 +58,9 @@ def main():
     plt.grid(True, linestyle="--", alpha=0.6)
     plt.tight_layout()
     if(args.test=="yes" or args.test=="YES" or args.test=="Yes" ):
-        out_path = os.path.join(base_dir,"results", args.ticker,"test","model_comparison_plot.png")
+        out_path = os.path.join("/home/satwik/mafa/","results", args.ticker,"test","model_comparison_plot.png")
     else:
-        out_path = os.path.join(base_dir,"results", args.ticker,"train","model_comparison_plot.png")
+        out_path = os.path.join("/home/satwik/mafa/","results", args.ticker,"train","model_comparison_plot.png")
     os.makedirs(os.path.dirname(out_path), exist_ok=True)
     plt.savefig(out_path, dpi=300)
     print(f"✅ Combined comparison plot saved to: {out_path}")
