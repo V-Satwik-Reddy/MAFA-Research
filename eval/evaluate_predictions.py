@@ -75,15 +75,16 @@ def main():
     models = {
         "mlp": os.path.join("output", args.ticker, "mlp_advanced", "predictions.csv"),
         "lstm": os.path.join("output", args.ticker, "lstm_advanced", "predictions.csv"),
-        "lstm_news": os.path.join("output", args.ticker, "lstm_news_advanced", "predictions.csv")
+        "lstm_news": os.path.join("output", args.ticker, "lstm_news_advanced", "predictions.csv"),
+        "lstm_finbert": os.path.join("output", args.ticker, "lstm_finbert", "predictions.csv")
     }
 
     # output base directories
     results_root = os.path.join("results", args.ticker)
     if is_test:
-        # test mode: read predictions from results/<ticker>/test/(prediction|predictions|)
-        sd=os.path.join(results_root, "test", "prediction")
-        out_base = os.path.join(results_root, "test")
+        # test mode: read predictions from results/<ticker>/test/prediction
+        sd = os.path.join(results_root, "test", "prediction")
+        out_base = os.path.join(results_root, "test", "returns")
     else:
         # train/default mode: write to results/<ticker>/train
         out_base = os.path.join(results_root, "train")

@@ -13,13 +13,15 @@ def main():
         paths = {
         "MLP Advanced": os.path.join("/home/satwik/mafa/","results", args.ticker ,"test","prediction","mlp_advanced_predictions.csv"),
         "LSTM Advanced": os.path.join("/home/satwik/mafa/", "results", args.ticker ,"test","prediction","lstm_advanced_predictions.csv"),
-        "LSTM + News Advanced": os.path.join("/home/satwik/mafa/", "results", args.ticker ,"test","prediction","lstm_news_advanced_predictions.csv")
+        "LSTM + News Advanced": os.path.join("/home/satwik/mafa/", "results", args.ticker ,"test","prediction","lstm_news_advanced_predictions.csv"),
+        "LSTM FinBERT": os.path.join("/home/satwik/mafa/", "results", args.ticker ,"test","prediction","lstm_finbert_predictions.csv")
         }
     else:
         paths = {
             "MLP Advanced": os.path.join("/home/satwik/mafa/","output", args.ticker ,"mlp_advanced", "predictions.csv"),
             "LSTM Advanced": os.path.join("/home/satwik/mafa/", "output", args.ticker ,"lstm_advanced", "predictions.csv"),
-            "LSTM + News Advanced": os.path.join("/home/satwik/mafa/", "output", args.ticker ,"lstm_news_advanced", "predictions.csv")
+            "LSTM + News Advanced": os.path.join("/home/satwik/mafa/", "output", args.ticker ,"lstm_news_advanced", "predictions.csv"),
+            "LSTM FinBERT": os.path.join("/home/satwik/mafa/", "output", args.ticker ,"lstm_finbert", "predictions.csv")
         }
     # print(base_dir)
     dfs = {}
@@ -50,6 +52,8 @@ def main():
         plt.plot(merged["date"], merged["LSTM Advanced Pred"], '--', label="LSTM Pred", color="green")
     if "LSTM + News Advanced Pred" in merged:
         plt.plot(merged["date"], merged["LSTM + News Advanced Pred"], '--', label="LSTM+News Pred", color="red")
+    if "LSTM FinBERT Pred" in merged:
+        plt.plot(merged["date"], merged["LSTM FinBERT Pred"], '--', label="LSTM FinBERT Pred", color="purple")
 
     plt.xlabel("Date")
     plt.ylabel("Price")
