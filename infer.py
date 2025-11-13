@@ -25,13 +25,20 @@ from sklearn.preprocessing import MinMaxScaler
 
 # reuse helper functions from your scripts
 from src.mlp_advanced import load_prices, make_sequences_multifeat
+# try import sentiment utilities from lstm_news first, then fall back to lstm_finbert if present
+compute_daily_sentiment = None
+align_with_sentiment = None
+make_sequences_multifeat_with_sent = None
 try:
     from src.lstm_news_advanced import compute_daily_sentiment, align_with_sentiment, make_sequences_multifeat_with_sent
 except Exception:
-    # if lstm_news_advanced not importable for some reason, define fallback that raises when needed
-    compute_daily_sentiment = None
-    align_with_sentiment = None
-    make_sequences_multifeat_with_sent = None
+    try:
+        from src.lstm_finbert import compute_daily_sentiment, align_with_sentiment, make_sequences_multifeat_with_sent
+    except Exception:
+        # leave as None; ModelWrapper will raise if sentiment utilities are required but unavailable
+        compute_daily_sentiment = None
+        align_with_sentiment = None
+        make_sequences_multifeat_with_sent = None
 
 
 class ModelWrapper:
